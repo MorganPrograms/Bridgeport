@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Calendar</title>
+<style>
+  /* Styles for the calendar */
+  .calendar {
+    font-family: Arial, sans-serif;
+    max-width: 300px;
+    margin: auto;
+  }
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .calendar-prev, .calendar-next {
+    cursor: pointer;
+  }
+  .calendar-table {
+    width: 100%;
+  }
+  .calendar-day {
+    text-align: center;
+    padding: 5px;
+    border: 1px solid #ccc;
+  }
+  .calendar-day:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+  .calendar-day:current {
+    background-color: black;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="calendar" id="calendar">
+  <div class="calendar-header">
+    <span class="calendar-prev" onclick="prevMonth()">&#8249;</span>
+    <span id="calendar-month-year"></span>
+    <span class="calendar-next" onclick="nextMonth()">&#8250;</span>
+  </div>
+  <table class="calendar-table">
+    <thead>
+      <tr>
+        <th>Sun</th>
+        <th>Mon</th>
+        <th>Tue</th>
+        <th>Wed</th>
+        <th>Thu</th>
+        <th>Fri</th>
+        <th>Sat</th>
+      </tr>
+    </thead>
+    <tbody id="calendar-body"></tbody>
+  </table>
+</div>
+<script>
+  const calendar = document.getElementById('calendar');
+  const calendarMonthYear = document.getElementById('calendar-month-year');
+  const calendarBody = document.getElementById('calendar-body');
+
+  let currentDate = new Date();
+  let selectedDate = currentDate;
+
+  function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    calendarMonthYear.textContent = `${year}/${month + 1}`;
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    let dayCounter = 1;
+    calendarBody.innerHTML = '';
+
+    for (let i = 0; i < 6; i++) {
+      const row = document.createElement('tr');
+
+      for (let j = 0; j < 7; j++) {
+        if ((i === 0 && j < firstDay) || dayCounter > daysInMonth) {
+          row.innerHTML += '<td></td>';
+        } else {
+          const cell = document.createElement('td');
+          cell.textContent = dayCounter;
+          cell.classList.add('calendar-day');
+          cell.onclick = () => selectDate(new Date(year, month, dayCounter));
+          row.appendChild(cell);
+          dayCounter++;
+        }
+      }
+
+      calendarBody.appendChild(row);
+    }
+  }
+
+  function prevMonth() {
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
+    renderCalendar();
+  }
+
+  function nextMonth() {
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+    renderCalendar();
+  }
+
+  function selectDate(date) {
+    selectedDate = date;
+    alert(`Selected date: ${date.toDateString()}`);
+  }
+
+  renderCalendar();
+</script>
+</body>
+</html>
